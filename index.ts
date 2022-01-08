@@ -1,5 +1,5 @@
 const config = {
-  initialForm: document.getElementById("initial-form"),
+  initialForm: document.getElementById("initial-form") as HTMLFormElement,
   bankPage: document.getElementById("bankPage"),
 };
 
@@ -107,25 +107,42 @@ function mainBankPage(BankAccount): Node {
   );
 
   menuConainer.innerHTML = `
-        <div class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
+        <div id="withdrawBtn" class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
             <div class="bg-blue hover p-3">
                 <h5>引き出す</h5>
                 <i class="fas fa-wallet fa-3x"></i>
             </div>
         </div>
-        <div class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
+        <div id="depositBtn" class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
             <div class="bg-blue hover p-3">
                 <h5>預ける</h5>
                 <i class="fas fa-coins fa-3x"></i>
             </div>
         </div>
-        <div class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
-            <div class="bg-blue hover p-3">
+        <div id="comeBackLater" class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
+            <div id="" class="bg-blue hover p-3">
                 <h5>COME BACK LATER</h5>
                 <i class="fas fa-home fa-3x"></i>
             </div>
         </div>
     `;
+
+  // 引き出す、預ける、come back laterに対してクリックイベント
+  menuConainer
+    .querySelector("#withdrawBtn")
+    .addEventListener("click", function () {
+      alert("withDraw");
+    });
+  menuConainer
+    .querySelector("#depositBtn")
+    .addEventListener("click", function () {
+      alert("deposit");
+    });
+  menuConainer
+    .querySelector("#comeBackLater")
+    .addEventListener("click", function () {
+      alert("comeback");
+    });
 
   let container = document.createElement("div");
   container.append(userInfoContainer, balanceConainer, menuConainer);
