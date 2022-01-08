@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+
+    <!-- fontawesome -->
+    <link
+      href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"
+      rel="stylesheet"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 
+    ToDo: 今度何度も使う、initial-formとbankPageの要素の情報を名前空間configの中に保存し、コンソールで出力しましょう。 
+-->
+    <!-- 1ページ目 -->
+    <div
+      class="
+        vh-100
+        bg-dark
+        d-flex
+        flex-column
+        justify-content-center
+        align-items-center
+      "
+    >
+      <div class="d-flex align-items-center col-md-7 col-10">
+        <div id="initial-form" class="bg-white col-12 text-center p-4">
+          <h2 class="pb-3">あなたの情報を入力してください</h2>
+          <form class="form">
+            <div class="form-group">
+              <!-- input要素のrequired属性は、その入力項目が必須属性であることをブラウザに知らせることができます。HTML5では、required属性を設定するだけでJavaScriptによる入力チェックがなくてもエラーメッセージを表示させることが可能です。 -->
+              <input
+                type="email"
+                name="userEmail"
+                class="form-control"
+                placeholder="メールアドレス"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                name="userFirstName"
+                class="form-control"
+                placeholder="性"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                name="userLastName"
+                class="form-control"
+                placeholder="名"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="number"
+                class="form-control"
+                name="userFirstDeposit"
+                aria-describedby="emailHelp"
+                placeholder="最初に入金する金額"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <div class="form-check">
+                <!-- チェックボックスをあらかじめチェックするにはchecked属性を使用します。 -->
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="userAccountType"
+                  id="userAccountType1"
+                  value="savings"
+                  checked
+                  required
+                />
+                <label class="form-check-label" for="userAccountType1">
+                  Savings
+                </label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="userAccountType"
+                  id="userAccountType2"
+                  value="checkings"
+                  required
+                />
+                <label class="form-check-label" for="userAccountType2">
+                  Checkings
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary col-12">送信</button>
+          </form>
+        </div>
+        <!-- 2ページ目の枠 -->
+        <div id="bankPage" class="bg-green col-12 text-center text-white"></div>
+      </div>
+    </div>
+  </body>
+</html>
