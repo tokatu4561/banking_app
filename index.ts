@@ -71,9 +71,10 @@ function initializeUserAccount() {
 }
 
 //ユーザーアカウント作成後のメインのホームのページを出力する
-function mainBankPage(BankAccount) {
-  let userInfoContent = document.createElement("div") as HTMLDivElement;
-  userInfoContent.classList.add("pb-2", "pb-md-4", "text-right");
+function mainBankPage(BankAccount): Node {
+  // ユーザー情報部分のhtml作成
+  let userInfoContainer = document.createElement("div") as HTMLDivElement;
+  userInfoContainer.classList.add("pb-2", "pb-md-4", "text-right");
 
   let name = document.createElement("p");
   let accountId = name.cloneNode(true) as HTMLDivElement;
@@ -83,6 +84,51 @@ function mainBankPage(BankAccount) {
   accountId.innerHTML = BankAccount.accountNumber;
   initialDeposit.innerHTML = BankAccount.initialDeposit;
 
-  userInfoContent.append(name, accountId, initialDeposit);
-  return userInfoContent;
+  userInfoContainer.append(name, accountId, initialDeposit);
+
+  //　金額部分のHTML作成
+  let balanceConainer = document.createElement("div") as HTMLDivElement;
+  balanceConainer.classList.add("d-flex", "bg-danger", "py-1", "py-md-2");
+
+  balanceConainer.innerHTML = `
+  <p class="col-8 text-left rem1p5">利用可能残高</p>
+  <p class="col-4 text-right rem1p5">$${BankAccount.money}</p>
+  `;
+
+  // メニュー部分のHTML作成
+  let menuConainer = document.createElement("div") as HTMLDivElement;
+  menuConainer.classList.add(
+    "d-flex",
+    "justify-content-center",
+    "flex-wrap",
+    "text-center",
+    "py-3",
+    "mx-0"
+  );
+
+  menuConainer.innerHTML = `
+        <div class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
+            <div class="bg-blue hover p-3">
+                <h5>引き出す</h5>
+                <i class="fas fa-wallet fa-3x"></i>
+            </div>
+        </div>
+        <div class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
+            <div class="bg-blue hover p-3">
+                <h5>預ける</h5>
+                <i class="fas fa-coins fa-3x"></i>
+            </div>
+        </div>
+        <div class="col-lg-4 col-12 py-1 py-md-3 px-0 px-md-1">
+            <div class="bg-blue hover p-3">
+                <h5>COME BACK LATER</h5>
+                <i class="fas fa-home fa-3x"></i>
+            </div>
+        </div>
+    `;
+
+  let container = document.createElement("div");
+  container.append(userInfoContainer, balanceConainer, menuConainer);
+
+  return container;
 }
