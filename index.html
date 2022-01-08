@@ -38,7 +38,11 @@
       <div class="d-flex align-items-center col-md-7 col-10">
         <div id="initial-form" class="bg-white col-12 text-center p-4">
           <h2 class="pb-3">あなたの情報を入力してください</h2>
-          <form class="form">
+          <form
+            id="bank-form"
+            class="form"
+            onsubmit="initializeUserAccount(); event.preventDefault()"
+          >
             <div class="form-group">
               <!-- input要素のrequired属性は、その入力項目が必須属性であることをブラウザに知らせることができます。HTML5では、required属性を設定するだけでJavaScriptによる入力チェックがなくてもエラーメッセージを表示させることが可能です。 -->
               <input
@@ -114,5 +118,6 @@
         <div id="bankPage" class="bg-green col-12 text-center text-white"></div>
       </div>
     </div>
+    <script src="./index.js"></script>
   </body>
 </html>
