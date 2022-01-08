@@ -1,6 +1,12 @@
+// 画面に表示するコンテンツの制御
+function displayToggle(el) {
+  el.classList.toggle("d-none");
+}
+
 const config = {
   initialForm: document.getElementById("initial-form") as HTMLFormElement,
   bankPage: document.getElementById("bankPage"),
+  sidePage: document.getElementById("sidePage"),
 };
 
 class BankAccount {
@@ -131,7 +137,7 @@ function mainBankPage(BankAccount): Node {
   menuConainer
     .querySelector("#withdrawBtn")
     .addEventListener("click", function () {
-      alert("withDraw");
+      withdrawController();
     });
   menuConainer
     .querySelector("#depositBtn")
@@ -210,6 +216,16 @@ function backNextBtn(backString, nextString) {
   </div>
   `;
   return container;
+}
+
+// 預金引き出しのページを表示させる
+function withdrawController() {
+  displayToggle(config.bankPage);
+  displayToggle(config.sidePage);
+
+  config.bankPage.innerHTML = "";
+  config.sidePage.innerHTML = "";
+  config.sidePage.append(withdrawPage());
 }
 
 // 預金引き出しのページ
