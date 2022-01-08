@@ -34,7 +34,7 @@ class BankAccount {
   }
 }
 
-function getRandomInteger(min, max) {
+function getRandomInteger(min: number, max: number) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
@@ -146,6 +146,82 @@ function mainBankPage(BankAccount): Node {
 
   let container = document.createElement("div");
   container.append(userInfoContainer, balanceConainer, menuConainer);
+
+  return container;
+}
+
+function billInputSelector(title) {
+  let container = document.createElement("div");
+  container.innerHTML = `
+      <h2 class="pb-3">${title}</h2>
+      <div class="form-group row">
+          <label for="moneyWithdraw100" class="col-2 col-form-label col-form-label-sm">$100</label>
+          <div class="col-10">
+              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="100" id="moneyWithdraw100" placeholder="5">
+          </div>
+      </div>
+      <div class="form-group row">
+          <label for="moneyWithdraw50" class="col-2 col-form-label col-form-label-sm">$50</label>
+          <div class="col-10">
+              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="50" id="moneyWithdraw50" placeholder="1">
+          </div>
+      </div>
+      <div class="form-group row">
+          <label for="moneyWithdraw20" class="col-2 col-form-label col-form-label-sm">$20</label>
+          <div class="col-10">
+              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="20" id="moneyWithdraw20" placeholder="2">
+          </div>
+      </div>
+      <div class="form-group row">
+          <label for="moneyWithdraw10" class="col-2 col-form-label col-form-label-sm">$10</label>
+          <div class="col-10">
+              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="10" id="moneyWithdraw10" placeholder="3">
+          </div>
+      </div>
+      <div class="form-group row">
+          <label for="moneyWithdraw5" class="col-2 col-form-label col-form-label-sm">$5</label>
+          <div class="col-10">
+              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="5" id="moneyWithdraw5" placeholder="1">
+          </div>
+      </div>
+      <div class="form-group row">
+          <label for="moneyWithdraw1" class="col-2 col-form-label col-form-label-sm">$1</label>
+          <div class="col-10">
+              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="1" id="moneyWithdraw1" placeholder="4">
+          </div>
+      </div>
+      <div class="text-center money-box p-3">
+          <p id="withdrawTotal">$0.00</p>
+      </div>
+  `;
+  return container;
+}
+
+function backNextBtn(backString, nextString) {
+  let container = document.createElement("div");
+  container.innerHTML = `
+  <div class="d-flex justify-content-between">
+      <div class="col-6 pl-0">
+          <button class="btn btn-outline-primary col-12">${backString}</button>
+      </div>
+      <div class="col-6 pr-0">
+          <button class="btn btn-primary col-12">${nextString}</button>
+      </div>
+  </div>
+  `;
+  return container;
+}
+
+// 預金引き出しのページ
+function withdrawPage() {
+  let container = document.createElement("div");
+  container.classList.add("p-5");
+
+  let withdrawContainer = document.createElement("div");
+  container.append(withdrawContainer);
+
+  withdrawContainer.append(billInputSelector("引き出す金額を入力してください"));
+  withdrawContainer.append(backNextBtn("戻る", "次へ"));
 
   return container;
 }
