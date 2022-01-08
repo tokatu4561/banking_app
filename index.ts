@@ -1,5 +1,5 @@
 // 画面に表示するコンテンツの制御
-function displayToggle(el) {
+function displayToggle(el: HTMLElement) {
   el.classList.toggle("d-none");
 }
 
