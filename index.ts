@@ -239,5 +239,15 @@ function withdrawPage() {
   withdrawContainer.append(billInputSelector("引き出す金額を入力してください"));
   withdrawContainer.append(backNextBtn("戻る", "次へ"));
 
+  let billInputs = withdrawContainer.querySelectorAll(
+    ".bill-input"
+  ) as NodeListOf<HTMLInputElement>;
+
+  for (let i = 0; i < billInputs.length; i++) {
+    billInputs[i].addEventListener("change", function () {
+      document.getElementById("withdrawTotal").innerHTML = this.value;
+    });
+  }
+
   return container;
 }
