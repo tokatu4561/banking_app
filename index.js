@@ -9,6 +9,7 @@
 // };
 // var BankAccount = /** @class */ (function () {
 //     function BankAccount(firstName, lastName, email, accountNumber, type, money) {
+//         this.maxWithdrawPercent = 0.2;
 //         this.firstName = firstName;
 //         this.lastName = lastName;
 //         this.email = email;
@@ -19,6 +20,11 @@
 //     }
 //     BankAccount.prototype.getFullName = function () {
 //         return this.firstName + " " + this.lastName;
+//     };
+//     // 引き出せる限度額を計算する(残高の20%)
+//     BankAccount.prototype.calculateWithdrawAmount = function (amount) {
+//         var maxWithdrawDeposit = Math.floor(this.money * this.maxWithdrawPercent);
+//         return amount > maxWithdrawDeposit ? maxWithdrawDeposit : amount;
 //     };
 //     return BankAccount;
 // }());
@@ -109,10 +115,6 @@
 //         displayToggle(config.bankPage);
 //         config.bankPage.append(mainBankPage(BankAccount));
 //     });
-//     var nextBtn = withdrawContainer.querySelector(".next-btn");
-//     nextBtn.addEventListener("click", function () {
-//         console.log(calculateWithdrawAmount(this.money));
-//     }.bind(BankAccount));
 //     var billInputs = withdrawContainer.querySelectorAll(".withdraw-bill");
 //     for (var i = 0; i < billInputs.length; i++) {
 //         billInputs[i].addEventListener("change", function () {
@@ -120,6 +122,19 @@
 //             document.getElementById("withdrawTotal").innerHTML = billSummation(billInputs, "data-bill").toString();
 //         });
 //     }
+//     var nextBtn = withdrawContainer.querySelector(".next-btn");
+//     nextBtn.addEventListener("click", function () {
+//         BankAccount.calculateWithdrawAmount(billSummation(billInputs, "data-bill"));
+//         container.innerHTML = "";
+//         var confirmDialog = document.createElement("div");
+//         confirmDialog.append(billDialog("The money you are going to take is ...", billInputs, "data-bill"));
+//         container.append(confirmDialog);
+//         var total = billSummation(billInputs, "data-bill");
+//         confirmDialog.innerHTML += "\n            <div class=\"d-flex bg-danger py-1 py-md-2 mb-3 text-white\">\n                <p class=\"col-8 text-left rem1p5\">Total to be withdrawn: </p>\n                <p class=\"col-4 text-right rem1p5\">$".concat(BankAccount.calculateWithdrawAmount(total), "</p>\n            </div>\n        ");
+//         // Go Back、Confirmボタンを追加。
+//         var withdrawConfirmBtns = backNextBtn("Go Back", "Confirm");
+//         confirmDialog.append(withdrawConfirmBtns);
+//     });
 //     return container;
 // }
 // // 明細の合計を算出する(預金引き出しのページ)
@@ -136,7 +151,17 @@
 //     }
 //     return summation;
 // }
-// // 引き出せる限度額を計算する(残高の20%)
-// function calculateWithdrawAmount(currentDeposit) {
-//     return (currentDeposit * 2) / 10;
+// function billDialog(title, inputElementNodeList, multiplierAttribute) {
+//     var container = document.createElement("div");
+//     var billElements = "";
+//     for (var i = 0; i < inputElementNodeList.length; i++) {
+//         var value = parseInt(inputElementNodeList[i].value);
+//         if (value > 0) {
+//             var bill = "$" + inputElementNodeList[i].getAttribute(multiplierAttribute);
+//             billElements += "<p class=\"rem1p3 calculation-box mb-1 pr-2\">".concat(value, " \u00D7 ").concat(bill, "</p>");
+//         }
+//     }
+//     var totalString = "<p class=\"rem1p3 pr-2\">total: $".concat(billSummation(inputElementNodeList, multiplierAttribute), "</p>");
+//     container.innerHTML = "\n      <h2 class=\"pb-1\">".concat(title, "</h2>\n      <div class=\"d-flex justify-content-center\">\n          <div class=\"text-right col-8 px-1 calculation-box\">\n              ").concat(billElements, "\n              ").concat(totalString, "\n          </div>\n      </div>\n  ");
+//     return container;
 // }

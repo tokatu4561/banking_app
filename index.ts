@@ -41,9 +41,17 @@ class BankAccount {
   }
 
   // 引き出せる限度額を計算する(残高の20%)
-  calculateWithdrawAmount(amount) {
+  calculateWithdrawMoney(withdrawMoney: number): number {
     let maxWithdrawDeposit = Math.floor(this.money * this.maxWithdrawPercent);
-    return amount > maxWithdrawDeposit ? maxWithdrawDeposit : amount;
+    return withdrawMoney > maxWithdrawDeposit
+      ? maxWithdrawDeposit
+      : withdrawMoney;
+  }
+
+  // 料金を引き出して、残高を更新する
+  updateDeposit(withdrawMoney: number): number {
+    this.money -= this.calculateWithdrawMoney(withdrawMoney);
+    return this.calculateWithdrawMoney(withdrawMoney);
   }
 }
 
@@ -269,10 +277,52 @@ function withdrawPage(BankAccount: BankAccount): HTMLDivElement {
     });
   }
 
+  //   預金引き出し画面で次へボタンをクリックした後に確認画面へ
   let nextBtn = withdrawContainer.querySelector(".next-btn");
   nextBtn.addEventListener("click", function () {
-    BankAccount.calculateWithdrawAmount(billSummation(billInputs, "data-bill"));
+    BankAccount.calculateWithdrawMoney(billSummation(billInputs, "data-bill"));
+    container.innerHTML = "";
+
+    let confirmDialog = document.createElement("div");
+    confirmDialog.append(
+      billDialog("あなたが引き出そうとしている金額", billInputs, "data-bill")
+    );
+    container.append(confirmDialog);
+
+    let total = billSummation(billInputs, "data-bill");
+
+    confirmDialog.innerHTML += `
+            <div class="d-flex bg-danger py-1 py-md-2 mb-3 text-white">
+                <p class="col-8 text-left rem1p5">引き出す金額: </p>
+                <p class="col-4 text-right rem1p5">$${BankAccount.calculateWithdrawMoney(
+                  total
+                )}</p>
+            </div>
+        `;
+
+    // Go Back、Confirmボタンを追加。
+    let withdrawConfirmBtns = backNextBtn("戻る", "確定する");
+    confirmDialog.append(withdrawConfirmBtns);
+
+    //　確認画面で戻るボタンクリック後に前のページへ戻る
+    confirmDialog
+      .querySelector("back-btn")
+      .addEventListener("click", function () {
+        container.innerHTML = "";
+        container.append(withdrawContainer);
+      });
+    // 確認画面で確認ボタン押後にホームボタンへ
+    confirmDialog
+      .querySelector("next-btn")
+      .addEventListener("click", function () {
+        BankAccount.updateDeposit(total);
+        displayToggle(config.sidePage);
+        displayToggle(config.bankPage);
+
+        config.bankPage.append(mainBankPage(BankAccount));
+      });
   });
+
   return container;
 }
 
@@ -294,4 +344,36 @@ function billSummation(
   }
 
   return summation;
+}
+
+//預金引き出し確認画面
+function billDialog(title, inputElementNodeList, multiplierAttribute) {
+  let container = document.createElement("div");
+
+  let billElements = "";
+  for (let i = 0; i < inputElementNodeList.length; i++) {
+    let value = parseInt(inputElementNodeList[i].value);
+
+    if (value > 0) {
+      let bill =
+        "$" + inputElementNodeList[i].getAttribute(multiplierAttribute);
+      billElements += `<p class="rem1p3 calculation-box mb-1 pr-2">${value} × ${bill}</p>`;
+    }
+  }
+
+  let totalString = `<p class="rem1p3 pr-2">total: $${billSummation(
+    inputElementNodeList,
+    multiplierAttribute
+  )}</p>`;
+
+  container.innerHTML = `
+      <h2 class="pb-1">${title}</h2>
+      <div class="d-flex justify-content-center">
+          <div class="text-right col-8 px-1 calculation-box">
+              ${billElements}
+              ${totalString}
+          </div>
+      </div>
+  `;
+  return container;
 }
