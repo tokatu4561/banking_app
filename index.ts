@@ -245,9 +245,32 @@ function withdrawPage() {
 
   for (let i = 0; i < billInputs.length; i++) {
     billInputs[i].addEventListener("change", function () {
-      document.getElementById("withdrawTotal").innerHTML = this.value;
+      document.getElementById("withdrawTotal").innerHTML = billSummation(
+        billInputs,
+        "data-bill"
+      ).toString();
     });
   }
 
   return container;
+}
+
+// 明細の合計を算出する(預金引き出しのページ)
+function billSummation(
+  inputElementNodeList: NodeListOf<HTMLInputElement>,
+  multiplierAttribute: string
+): number {
+  let summation = 0;
+
+  for (let i = 0; i < inputElementNodeList.length; i++) {
+    let currentEl = inputElementNodeList[i];
+    let value = parseInt(currentEl.value);
+
+    if (currentEl.hasAttribute(multiplierAttribute))
+      value *= parseInt(currentEl.getAttribute(multiplierAttribute));
+    // 入力が正の整数かどうか
+    if (value > 0) summation += value;
+  }
+
+  return summation;
 }
