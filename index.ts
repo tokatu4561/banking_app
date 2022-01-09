@@ -18,6 +18,7 @@ class BankAccount {
   money: number;
   initialDeposit: number;
 
+  maxWithdrawPercent: number = 0.2;
   constructor(
     firstName: string,
     lastName: string,
@@ -37,6 +38,12 @@ class BankAccount {
 
   getFullName() {
     return this.firstName + " " + this.lastName;
+  }
+
+  // 引き出せる限度額を計算する(残高の20%)
+  calculateWithdrawAmount(amount) {
+    let maxWithdrawDeposit = Math.floor(this.money * this.maxWithdrawPercent);
+    return amount > maxWithdrawDeposit ? maxWithdrawDeposit : amount;
   }
 }
 
@@ -211,7 +218,7 @@ function backNextBtn(backString: string, nextString: string): HTMLDivElement {
           <button class="btn btn-outline-primary back-btn col-12">${backString}</button>
       </div>
       <div class="col-6 pr-0">
-          <button class="btn btn-primary col-12">${nextString}</button>
+          <button class="btn btn-primary next-btn col-12">${nextString}</button>
       </div>
   </div>
   `;
@@ -262,6 +269,10 @@ function withdrawPage(BankAccount: BankAccount): HTMLDivElement {
     });
   }
 
+  let nextBtn = withdrawContainer.querySelector(".next-btn");
+  nextBtn.addEventListener("click", function () {
+    BankAccount.calculateWithdrawAmount(billSummation(billInputs, "data-bill"));
+  });
   return container;
 }
 

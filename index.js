@@ -36,7 +36,7 @@
 //     // ユーザーアカウント情報(ホームのページ)を表示
 //     config.bankPage.append(mainBankPage(userBankAccount));
 // }
-// //ユーザーアカウント作成後のメインのホームのページを出力する
+// //メインのホームのページの内容(残高やアカウント情報など)
 // function mainBankPage(BankAccount) {
 //     // ユーザー情報部分のhtml作成
 //     var userInfoContainer = document.createElement("div");
@@ -45,8 +45,8 @@
 //     var accountId = name.cloneNode(true);
 //     var initialDeposit = name.cloneNode(true);
 //     name.innerHTML = BankAccount.getFullName();
-//     accountId.innerHTML = BankAccount.accountNumber;
-//     initialDeposit.innerHTML = BankAccount.initialDeposit;
+//     accountId.innerHTML = BankAccount.accountNumber.toString();
+//     initialDeposit.innerHTML = BankAccount.initialDeposit.toString();
 //     userInfoContainer.append(name, accountId, initialDeposit);
 //     //　金額部分のHTML作成
 //     var balanceConainer = document.createElement("div");
@@ -60,7 +60,7 @@
 //     menuConainer
 //         .querySelector("#withdrawBtn")
 //         .addEventListener("click", function () {
-//         withdrawController();
+//         withdrawController(BankAccount);
 //     });
 //     menuConainer
 //         .querySelector("#depositBtn")
@@ -83,19 +83,19 @@
 // }
 // function backNextBtn(backString, nextString) {
 //     var container = document.createElement("div");
-//     container.innerHTML = "\n  <div class=\"d-flex justify-content-between\">\n      <div class=\"col-6 pl-0\">\n          <button class=\"btn btn-outline-primary back-btn col-12\">".concat(backString, "</button>\n      </div>\n      <div class=\"col-6 pr-0\">\n          <button class=\"btn btn-primary col-12\">").concat(nextString, "</button>\n      </div>\n  </div>\n  ");
+//     container.innerHTML = "\n  <div class=\"d-flex justify-content-between\">\n      <div class=\"col-6 pl-0\">\n          <button class=\"btn btn-outline-primary back-btn col-12\">".concat(backString, "</button>\n      </div>\n      <div class=\"col-6 pr-0\">\n          <button class=\"btn btn-primary next-btn col-12\">").concat(nextString, "</button>\n      </div>\n  </div>\n  ");
 //     return container;
 // }
 // // 預金引き出しのページを表示させる
-// function withdrawController() {
+// function withdrawController(BankAccount) {
 //     displayToggle(config.bankPage);
 //     displayToggle(config.sidePage);
 //     config.bankPage.innerHTML = "";
 //     config.sidePage.innerHTML = "";
-//     config.sidePage.append(withdrawPage());
+//     config.sidePage.append(withdrawPage(BankAccount));
 // }
 // // 預金引き出しのページ
-// function withdrawPage() {
+// function withdrawPage(BankAccount) {
 //     var container = document.createElement("div");
 //     container.classList.add("p-5");
 //     var withdrawContainer = document.createElement("div");
@@ -107,7 +107,12 @@
 //     backBtn.addEventListener("click", function () {
 //         displayToggle(config.sidePage);
 //         displayToggle(config.bankPage);
+//         config.bankPage.append(mainBankPage(BankAccount));
 //     });
+//     var nextBtn = withdrawContainer.querySelector(".next-btn");
+//     nextBtn.addEventListener("click", function () {
+//         console.log(calculateWithdrawAmount(this.money));
+//     }.bind(BankAccount));
 //     var billInputs = withdrawContainer.querySelectorAll(".withdraw-bill");
 //     for (var i = 0; i < billInputs.length; i++) {
 //         billInputs[i].addEventListener("change", function () {
@@ -130,4 +135,8 @@
 //             summation += value;
 //     }
 //     return summation;
+// }
+// // 引き出せる限度額を計算する(残高の20%)
+// function calculateWithdrawAmount(currentDeposit) {
+//     return (currentDeposit * 2) / 10;
 // }
