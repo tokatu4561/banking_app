@@ -76,8 +76,8 @@ function initializeUserAccount() {
   config.bankPage.append(mainBankPage(userBankAccount));
 }
 
-//ユーザーアカウント作成後のメインのホームのページを出力する
-function mainBankPage(BankAccount): Node {
+//メインのホームのページの内容(残高やアカウント情報など)
+function mainBankPage(BankAccount: BankAccount): Node {
   // ユーザー情報部分のhtml作成
   let userInfoContainer = document.createElement("div") as HTMLDivElement;
   userInfoContainer.classList.add("pb-2", "pb-md-4", "text-right");
@@ -87,8 +87,8 @@ function mainBankPage(BankAccount): Node {
   let initialDeposit = name.cloneNode(true) as HTMLDivElement;
 
   name.innerHTML = BankAccount.getFullName();
-  accountId.innerHTML = BankAccount.accountNumber;
-  initialDeposit.innerHTML = BankAccount.initialDeposit;
+  accountId.innerHTML = BankAccount.accountNumber.toString();
+  initialDeposit.innerHTML = BankAccount.initialDeposit.toString();
 
   userInfoContainer.append(name, accountId, initialDeposit);
 
@@ -137,7 +137,7 @@ function mainBankPage(BankAccount): Node {
   menuConainer
     .querySelector("#withdrawBtn")
     .addEventListener("click", function () {
-      withdrawController();
+      withdrawController(BankAccount);
     });
   menuConainer
     .querySelector("#depositBtn")
@@ -156,7 +156,7 @@ function mainBankPage(BankAccount): Node {
   return container;
 }
 
-function billInputSelector(title) {
+function billInputSelector(title: string): HTMLDivElement {
   let container = document.createElement("div");
   container.innerHTML = `
       <h2 class="pb-3">${title}</h2>
@@ -203,12 +203,12 @@ function billInputSelector(title) {
   return container;
 }
 
-function backNextBtn(backString, nextString) {
+function backNextBtn(backString: string, nextString: string): HTMLDivElement {
   let container = document.createElement("div");
   container.innerHTML = `
   <div class="d-flex justify-content-between">
       <div class="col-6 pl-0">
-          <button class="btn btn-outline-primary col-12">${backString}</button>
+          <button class="btn btn-outline-primary back-btn col-12">${backString}</button>
       </div>
       <div class="col-6 pr-0">
           <button class="btn btn-primary col-12">${nextString}</button>
@@ -219,17 +219,17 @@ function backNextBtn(backString, nextString) {
 }
 
 // 預金引き出しのページを表示させる
-function withdrawController() {
+function withdrawController(BankAccount: BankAccount): void {
   displayToggle(config.bankPage);
   displayToggle(config.sidePage);
 
   config.bankPage.innerHTML = "";
   config.sidePage.innerHTML = "";
-  config.sidePage.append(withdrawPage());
+  config.sidePage.append(withdrawPage(BankAccount));
 }
 
 // 預金引き出しのページ
-function withdrawPage() {
+function withdrawPage(BankAccount: BankAccount): HTMLDivElement {
   let container = document.createElement("div");
   container.classList.add("p-5");
 
@@ -239,12 +239,22 @@ function withdrawPage() {
   withdrawContainer.append(billInputSelector("引き出す金額を入力してください"));
   withdrawContainer.append(backNextBtn("戻る", "次へ"));
 
+  //　戻るボタンで前のページを表示するイベントリスナー
+  let backBtn = withdrawContainer.querySelector(".back-btn");
+  backBtn.addEventListener("click", function () {
+    displayToggle(config.sidePage);
+    displayToggle(config.bankPage);
+
+    config.bankPage.append(mainBankPage(BankAccount));
+  });
+
   let billInputs = withdrawContainer.querySelectorAll(
-    ".bill-input"
+    ".withdraw-bill"
   ) as NodeListOf<HTMLInputElement>;
 
   for (let i = 0; i < billInputs.length; i++) {
     billInputs[i].addEventListener("change", function () {
+      console.log("a");
       document.getElementById("withdrawTotal").innerHTML = billSummation(
         billInputs,
         "data-bill"
