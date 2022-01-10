@@ -157,6 +157,7 @@ function mainBankPage(BankAccount: BankAccount): Node {
   menuConainer
     .querySelector("#depositBtn")
     .addEventListener("click", function () {
+      sideBankSwitch();
       alert("deposit");
     });
   menuConainer
@@ -233,13 +234,18 @@ function backNextBtn(backString: string, nextString: string): HTMLDivElement {
   return container;
 }
 
-// 預金引き出しのページを表示させる
-function withdrawController(BankAccount: BankAccount): void {
+// 表示を切り替える際に毎回実行
+function sideBankSwitch() {
   displayToggle(config.bankPage);
   displayToggle(config.sidePage);
 
   config.bankPage.innerHTML = "";
   config.sidePage.innerHTML = "";
+}
+
+// 預金引き出しのページを表示させる
+function withdrawController(BankAccount: BankAccount): void {
+  sideBankSwitch();
   config.sidePage.append(withdrawPage(BankAccount));
 }
 
@@ -257,8 +263,7 @@ function withdrawPage(BankAccount: BankAccount): HTMLDivElement {
   //　戻るボタンで前のページを表示するイベントリスナー
   let backBtn = withdrawContainer.querySelector(".back-btn");
   backBtn.addEventListener("click", function () {
-    displayToggle(config.sidePage);
-    displayToggle(config.bankPage);
+    sideBankSwitch();
 
     config.bankPage.append(mainBankPage(BankAccount));
   });
@@ -306,18 +311,17 @@ function withdrawPage(BankAccount: BankAccount): HTMLDivElement {
 
     //　確認画面で戻るボタンクリック後に前のページへ戻る
     confirmDialog
-      .querySelector("back-btn")
+      .querySelector(".back-btn")
       .addEventListener("click", function () {
         container.innerHTML = "";
         container.append(withdrawContainer);
       });
     // 確認画面で確認ボタン押後にホームボタンへ
     confirmDialog
-      .querySelector("next-btn")
+      .querySelector(".next-btn")
       .addEventListener("click", function () {
         BankAccount.updateDeposit(total);
-        displayToggle(config.sidePage);
-        displayToggle(config.bankPage);
+        sideBankSwitch();
 
         config.bankPage.append(mainBankPage(BankAccount));
       });
@@ -361,7 +365,7 @@ function billDialog(title, inputElementNodeList, multiplierAttribute) {
     }
   }
 
-  let totalString = `<p class="rem1p3 pr-2">total: $${billSummation(
+  let totalString = `<p class="rem1p3 pr-2">合計: $${billSummation(
     inputElementNodeList,
     multiplierAttribute
   )}</p>`;
@@ -375,5 +379,25 @@ function billDialog(title, inputElementNodeList, multiplierAttribute) {
           </div>
       </div>
   `;
+  return container;
+}
+
+// 預金するページ
+function depositPage(BankAccount: BankAccount): HTMLDivElement {
+  let container = document.createElement("div");
+  container.classList.add("p-5");
+
+  let depositContainer = document.createElement("div");
+  container.append(depositContainer);
+
+  depositContainer.append(billInputSelector("いくら預けますか？"));
+  depositContainer.append(backNextBtn("戻る", "次へ"));
+
+  let backBtn = depositContainer.querySelector(".back-btn");
+  backBtn.addEventListener("click", function () {
+    sideBankSwitch();
+    config.bankPage.append(mainBankPage(BankAccount));
+  });
+
   return container;
 }

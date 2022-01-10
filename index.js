@@ -22,9 +22,16 @@
 //         return this.firstName + " " + this.lastName;
 //     };
 //     // 引き出せる限度額を計算する(残高の20%)
-//     BankAccount.prototype.calculateWithdrawAmount = function (amount) {
+//     BankAccount.prototype.calculateWithdrawMoney = function (withdrawMoney) {
 //         var maxWithdrawDeposit = Math.floor(this.money * this.maxWithdrawPercent);
-//         return amount > maxWithdrawDeposit ? maxWithdrawDeposit : amount;
+//         return withdrawMoney > maxWithdrawDeposit
+//             ? maxWithdrawDeposit
+//             : withdrawMoney;
+//     };
+//     // 料金を引き出して、残高を更新する
+//     BankAccount.prototype.updateDeposit = function (withdrawMoney) {
+//         this.money -= this.calculateWithdrawMoney(withdrawMoney);
+//         return this.calculateWithdrawMoney(withdrawMoney);
 //     };
 //     return BankAccount;
 // }());
@@ -71,6 +78,7 @@
 //     menuConainer
 //         .querySelector("#depositBtn")
 //         .addEventListener("click", function () {
+//         sideBankSwitch();
 //         alert("deposit");
 //     });
 //     menuConainer
@@ -92,12 +100,16 @@
 //     container.innerHTML = "\n  <div class=\"d-flex justify-content-between\">\n      <div class=\"col-6 pl-0\">\n          <button class=\"btn btn-outline-primary back-btn col-12\">".concat(backString, "</button>\n      </div>\n      <div class=\"col-6 pr-0\">\n          <button class=\"btn btn-primary next-btn col-12\">").concat(nextString, "</button>\n      </div>\n  </div>\n  ");
 //     return container;
 // }
-// // 預金引き出しのページを表示させる
-// function withdrawController(BankAccount) {
+// // 表示を切り替える際に毎回実行
+// function sideBankSwitch() {
 //     displayToggle(config.bankPage);
 //     displayToggle(config.sidePage);
 //     config.bankPage.innerHTML = "";
 //     config.sidePage.innerHTML = "";
+// }
+// // 預金引き出しのページを表示させる
+// function withdrawController(BankAccount) {
+//     sideBankSwitch();
 //     config.sidePage.append(withdrawPage(BankAccount));
 // }
 // // 預金引き出しのページ
@@ -111,8 +123,7 @@
 //     //　戻るボタンで前のページを表示するイベントリスナー
 //     var backBtn = withdrawContainer.querySelector(".back-btn");
 //     backBtn.addEventListener("click", function () {
-//         displayToggle(config.sidePage);
-//         displayToggle(config.bankPage);
+//         sideBankSwitch();
 //         config.bankPage.append(mainBankPage(BankAccount));
 //     });
 //     var billInputs = withdrawContainer.querySelectorAll(".withdraw-bill");
@@ -122,18 +133,34 @@
 //             document.getElementById("withdrawTotal").innerHTML = billSummation(billInputs, "data-bill").toString();
 //         });
 //     }
+//     //   預金引き出し画面で次へボタンをクリックした後に確認画面へ
 //     var nextBtn = withdrawContainer.querySelector(".next-btn");
 //     nextBtn.addEventListener("click", function () {
-//         BankAccount.calculateWithdrawAmount(billSummation(billInputs, "data-bill"));
+//         BankAccount.calculateWithdrawMoney(billSummation(billInputs, "data-bill"));
 //         container.innerHTML = "";
 //         var confirmDialog = document.createElement("div");
-//         confirmDialog.append(billDialog("The money you are going to take is ...", billInputs, "data-bill"));
+//         confirmDialog.append(billDialog("あなたが引き出そうとしている金額", billInputs, "data-bill"));
 //         container.append(confirmDialog);
 //         var total = billSummation(billInputs, "data-bill");
-//         confirmDialog.innerHTML += "\n            <div class=\"d-flex bg-danger py-1 py-md-2 mb-3 text-white\">\n                <p class=\"col-8 text-left rem1p5\">Total to be withdrawn: </p>\n                <p class=\"col-4 text-right rem1p5\">$".concat(BankAccount.calculateWithdrawAmount(total), "</p>\n            </div>\n        ");
+//         confirmDialog.innerHTML += "\n            <div class=\"d-flex bg-danger py-1 py-md-2 mb-3 text-white\">\n                <p class=\"col-8 text-left rem1p5\">\u5F15\u304D\u51FA\u3059\u91D1\u984D: </p>\n                <p class=\"col-4 text-right rem1p5\">$".concat(BankAccount.calculateWithdrawMoney(total), "</p>\n            </div>\n        ");
 //         // Go Back、Confirmボタンを追加。
-//         var withdrawConfirmBtns = backNextBtn("Go Back", "Confirm");
+//         var withdrawConfirmBtns = backNextBtn("戻る", "確定する");
 //         confirmDialog.append(withdrawConfirmBtns);
+//         //　確認画面で戻るボタンクリック後に前のページへ戻る
+//         confirmDialog
+//             .querySelector(".back-btn")
+//             .addEventListener("click", function () {
+//             container.innerHTML = "";
+//             container.append(withdrawContainer);
+//         });
+//         // 確認画面で確認ボタン押後にホームボタンへ
+//         confirmDialog
+//             .querySelector(".next-btn")
+//             .addEventListener("click", function () {
+//             BankAccount.updateDeposit(total);
+//             sideBankSwitch();
+//             config.bankPage.append(mainBankPage(BankAccount));
+//         });
 //     });
 //     return container;
 // }
@@ -151,6 +178,7 @@
 //     }
 //     return summation;
 // }
+// //預金引き出し確認画面
 // function billDialog(title, inputElementNodeList, multiplierAttribute) {
 //     var container = document.createElement("div");
 //     var billElements = "";
@@ -163,5 +191,20 @@
 //     }
 //     var totalString = "<p class=\"rem1p3 pr-2\">total: $".concat(billSummation(inputElementNodeList, multiplierAttribute), "</p>");
 //     container.innerHTML = "\n      <h2 class=\"pb-1\">".concat(title, "</h2>\n      <div class=\"d-flex justify-content-center\">\n          <div class=\"text-right col-8 px-1 calculation-box\">\n              ").concat(billElements, "\n              ").concat(totalString, "\n          </div>\n      </div>\n  ");
+//     return container;
+// }
+// // 預金するページ
+// function depositPage(BankAccount) {
+//     var container = document.createElement("div");
+//     container.classList.add("p-5");
+//     var depositContainer = document.createElement("div");
+//     container.append(depositContainer);
+//     depositContainer.append(billInputSelector("いくら預けますか？"));
+//     depositContainer.append(backNextBtn("戻る", "次へ"));
+//     var backBtn = depositContainer.querySelector(".back-btn");
+//     backBtn.addEventListener("click", function () {
+//         sideBankSwitch();
+//         config.bankPage.append(mainBankPage(BankAccount));
+//     });
 //     return container;
 // }
