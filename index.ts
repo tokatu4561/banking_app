@@ -157,8 +157,7 @@ function mainBankPage(BankAccount: BankAccount): Node {
   menuConainer
     .querySelector("#depositBtn")
     .addEventListener("click", function () {
-      sideBankSwitch();
-      alert("deposit");
+      depositController(BankAccount);
     });
   menuConainer
     .querySelector("#comeBackLater")
@@ -179,41 +178,41 @@ function billInputSelector(title: string): HTMLDivElement {
       <div class="form-group row">
           <label for="moneyWithdraw100" class="col-2 col-form-label col-form-label-sm">$100</label>
           <div class="col-10">
-              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="100" id="moneyWithdraw100" placeholder="5">
+              <input type="number" class="form-control form-control-sm text-right bill-input" data-bill="100" id="moneyWithdraw100" placeholder="5">
           </div>
       </div>
       <div class="form-group row">
           <label for="moneyWithdraw50" class="col-2 col-form-label col-form-label-sm">$50</label>
           <div class="col-10">
-              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="50" id="moneyWithdraw50" placeholder="1">
+              <input type="number" class="form-control form-control-sm text-right bill-input" data-bill="50" id="moneyWithdraw50" placeholder="1">
           </div>
       </div>
       <div class="form-group row">
           <label for="moneyWithdraw20" class="col-2 col-form-label col-form-label-sm">$20</label>
           <div class="col-10">
-              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="20" id="moneyWithdraw20" placeholder="2">
+              <input type="number" class="form-control form-control-sm text-right bill-input" data-bill="20" id="moneyWithdraw20" placeholder="2">
           </div>
       </div>
       <div class="form-group row">
           <label for="moneyWithdraw10" class="col-2 col-form-label col-form-label-sm">$10</label>
           <div class="col-10">
-              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="10" id="moneyWithdraw10" placeholder="3">
+              <input type="number" class="form-control form-control-sm text-right bill-input" data-bill="10" id="moneyWithdraw10" placeholder="3">
           </div>
       </div>
       <div class="form-group row">
           <label for="moneyWithdraw5" class="col-2 col-form-label col-form-label-sm">$5</label>
           <div class="col-10">
-              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="5" id="moneyWithdraw5" placeholder="1">
+              <input type="number" class="form-control form-control-sm text-right bill-input" data-bill="5" id="moneyWithdraw5" placeholder="1">
           </div>
       </div>
       <div class="form-group row">
           <label for="moneyWithdraw1" class="col-2 col-form-label col-form-label-sm">$1</label>
           <div class="col-10">
-              <input type="number" class="form-control form-control-sm text-right withdraw-bill" data-bill="1" id="moneyWithdraw1" placeholder="4">
+              <input type="number" class="form-control form-control-sm text-right bill-input" data-bill="1" id="moneyWithdraw1" placeholder="4">
           </div>
       </div>
       <div class="text-center money-box p-3">
-          <p id="withdrawTotal">$0.00</p>
+          <p id="totalBill">$0.00</p>
       </div>
   `;
   return container;
@@ -269,13 +268,13 @@ function withdrawPage(BankAccount: BankAccount): HTMLDivElement {
   });
 
   let billInputs = withdrawContainer.querySelectorAll(
-    ".withdraw-bill"
+    ".bill-input"
   ) as NodeListOf<HTMLInputElement>;
 
   for (let i = 0; i < billInputs.length; i++) {
     billInputs[i].addEventListener("change", function () {
       console.log("a");
-      document.getElementById("withdrawTotal").innerHTML = billSummation(
+      document.getElementById("totalBill").innerHTML = billSummation(
         billInputs,
         "data-bill"
       ).toString();
@@ -382,6 +381,12 @@ function billDialog(title, inputElementNodeList, multiplierAttribute) {
   return container;
 }
 
+// 預金するページを表示させる
+function depositController(BankAccount: BankAccount): void {
+  sideBankSwitch();
+  config.sidePage.append(withdrawPage(BankAccount));
+}
+
 // 預金するページ
 function depositPage(BankAccount: BankAccount): HTMLDivElement {
   let container = document.createElement("div");
@@ -399,5 +404,17 @@ function depositPage(BankAccount: BankAccount): HTMLDivElement {
     config.bankPage.append(mainBankPage(BankAccount));
   });
 
+  let billInputs = depositContainer.querySelectorAll(
+    ".bill-input"
+  ) as NodeListOf<HTMLInputElement>;
+
+  for (let i = 0; i < billInputs.length; i++) {
+    billInputs[i].addEventListener("change", function () {
+      document.getElementById("totalBill").innerHTML = billSummation(
+        billInputs,
+        "data-bill"
+      ).toString();
+    });
+  }
   return container;
 }
