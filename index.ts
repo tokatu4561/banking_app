@@ -162,7 +162,8 @@ function mainBankPage(BankAccount: BankAccount): Node {
   menuConainer
     .querySelector("#comeBackLater")
     .addEventListener("click", function () {
-      alert("comeback");
+      sideBankSwitch();
+      config.sidePage.append(comeBackLaterPage(BankAccount));
     });
 
   let container = document.createElement("div");
@@ -400,8 +401,7 @@ function depositPage(BankAccount: BankAccount): HTMLDivElement {
 
   let backBtn = depositContainer.querySelector(".back-btn");
   backBtn.addEventListener("click", function () {
-    sideBankSwitch();
-    config.bankPage.append(mainBankPage(BankAccount));
+    bankReturn(BankAccount);
   });
 
   let billInputs = depositContainer.querySelectorAll(
@@ -416,5 +416,36 @@ function depositPage(BankAccount: BankAccount): HTMLDivElement {
       ).toString();
     });
   }
+  return container;
+}
+
+function bankReturn(bankAccount: BankAccount): void {
+  displayToggle(config.bankPage);
+  displayToggle(config.sidePage);
+  config.bankPage.append(mainBankPage(bankAccount));
+}
+
+function comeBackLaterPage(BankAccount: BankAccount): HTMLDivElement {
+  let container = document.createElement("div");
+
+  container.classList.add("p-5");
+
+  container.innerHTML = `
+        <div class="p-5">
+            <h2 class="pb-3">How many days will you be gone?</h2>
+            <div class="form-group">
+                <input type="number" class="form-control" id="days-gone" placeholder="4">
+            </div>
+        </div>
+    `;
+
+  container.append(backNextBtn("戻る", "確認"));
+
+  let backBtn = container.querySelector(".back-btn");
+
+  backBtn.addEventListener("click", function () {
+    config.bankPage.append(mainBankPage(BankAccount));
+  });
+
   return container;
 }
